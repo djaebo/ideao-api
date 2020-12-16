@@ -14,7 +14,7 @@ const cloudant = new Cloudant({
 
 const app = express();
 
-const questionsBase = cloudant.db.use("questions");
+const queData = cloudant.db.use("questions");
 
 app.use(cors({ origin: "*" }));
 
@@ -27,18 +27,13 @@ app.use(function (req, res, next) {
   next();
 });
 
-app.options("/api", function (req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "*");
-  res.setHeader("Access-Control-Allow-Headers", "*");
-  res.end();
-});
+
 
 app.use(express.json());
 
 app.get("/api/questions", async (_, res) => {
   try {
-    const response = await questionsBase.list();
+    const response = await queData.list();
 
     res.json(response);
   } catch (e) {
@@ -48,7 +43,7 @@ app.get("/api/questions", async (_, res) => {
 
 app.get("/api/questions/:id", async (req, res) => {
   try {
-    const response = await questionsBase.get(req.query.id);
+    const response = await queData.get(req.query.id);
 
     res.json(response);
   } catch (e) {
@@ -60,7 +55,7 @@ app.put("/api/questions/:id", async (req, res) => {
   try {
     const { question } = req.body;
 
-    const response = await questionsBase.insert(question);
+    const response = await queData.insert(question);
 
     res.json(response);
   } catch (e) {
@@ -71,7 +66,7 @@ app.put("/api/questions/:id", async (req, res) => {
 app.post("/api/questions", async (req, res) => {
   try {
     const { question } = req.body;
-    const response = await questionsBase.insert(question);
+    const response = await queData.insert(question);
 
     res.json(response);
   } catch (e) {
@@ -79,28 +74,6 @@ app.post("/api/questions", async (req, res) => {
   }
 });
 
-// app.put("/api/questions", async (req, res) => {
-//   try {
-//     const { product } = req.body;
-//     const response = await questionsBase.insert(product);
-//     res.json(response);
-//   } catch (e) {
-//     console.log(e);
-//   }
-// });
 
-app.delete("/api/questions", async (req, res) => {
-  try {
-    const { id, revId } = req.query;
-
-    const response = await questionsBase.destroy(id, revId);
-
-    res.json({
-      response: response,
-    });
-  } catch (e) {
-    console.log(e);
-  }
-});
 
 app.listen(PORT, () => console.log("server running"));
