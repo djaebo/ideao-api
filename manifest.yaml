@@ -1,0 +1,5 @@
+applications:
+  - name: "ideao-api"
+    memory: 64M
+    random-route: true
+    command: npm start
